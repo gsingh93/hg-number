@@ -12,7 +12,7 @@ config = ConfigParser()
 
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
 ID_FILE = 'hgnids.txt'
-CONFIG_FILE = 'hgn.conf'
+CONFIG_FILE = '.hgnrc'
 
 
 def fail(msg):
@@ -21,11 +21,11 @@ def fail(msg):
 
 
 def id_file_path():
-    return hg_root() + '/.hg/' + ID_FILE
+    return os.path.join(hg_root(), '.hg', ID_FILE)
 
 
 def config_file_path():
-    return hg_root() + '/.hg/' + CONFIG_FILE
+    return os.path.join(os.path.expanduser('~'), CONFIG_FILE)
 
 
 def hg_status():
