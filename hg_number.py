@@ -120,7 +120,7 @@ def main():
         files = get_filenames()
         new_args = substitute_filenames(files)
         print ' '.join(new_args)
-        subprocess.check_output(new_args)
+        subprocess.check_output(new_args, cwd=hg_root())
 
 
 if __name__ == '__main__':
