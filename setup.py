@@ -2,18 +2,10 @@ import os
 from setuptools import setup
 
 
-proj_dir = os.path.dirname(__file__)
-
-
-def read(filename):
-    return open(os.path.join(proj_dir, filename)).read()
-
-
 setup(
     name='hg-number',
-    version='0.0.2',
+    version='0.0.3',
     description='a python script that allows you to use numbers instead of file names in mercurial commands',
-    long_description=read('README.md'),
     url='https://github.com/gsingh93/hg-number',
     author='Gulshan Singh',
     author_email='gsingh2011@gmail.com',
