@@ -63,11 +63,22 @@ def substitute_filenames(files):
     return new_args
 
 
+def prepend_numbers(lines):
+    output = []
+    i = 1
+    for l in lines.split('\n'):
+        output.append(str(i) + ' ' + l)
+        i += 1
+
+    return '\n'.join(output)
+
+
 def main():
     if len(sys.argv) == 1:
         status_output = hg_status()
         save_status_output(status_output)
-        print status_output
+        if status_output != '':
+            print prepend_numbers(status_output)
     else:
         files = get_filenames()
         new_args = substitute_filenames(files)
