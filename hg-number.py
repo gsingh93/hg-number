@@ -1,5 +1,6 @@
 #!/usr/bin/python2
 
+from ConfigParser import ConfigParser
 import os
 import re
 import subprocess
@@ -7,8 +8,11 @@ import sys
 from termcolor import colored
 
 
+config = ConfigParser()
+
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
-ID_FILE = 'hgids.txt'
+ID_FILE = 'hgnids.txt'
+CONFIG_FILE = 'hgn.conf'
 
 
 def fail(msg):
@@ -20,8 +24,16 @@ def id_file_path():
     return hg_root() + '/.hg/' + ID_FILE
 
 
+def config_file_path():
+    return hg_root() + '/.hg/' + CONFIG_FILE
+
+
 def hg_status():
-    return subprocess.check_output(['hg', 'st', '--color', 'always']).strip()
+    args = ['hg', 'st']
+    if config_getboolean('color', False):
+        args.extend(['--color', 'always'])
+
+    return subprocess.check_output(args).strip()
 
 
 def hg_root():
@@ -77,7 +89,28 @@ def prepend_numbers(lines):
     return '\n'.join(output)
 
 
+def load_config():
+    global config
+
+    path = config_file_path()
+    if os.path.exists(path):
+        with open(path) as f:
+            config.read(path)
+
+
+def config_get(name, default, func):
+    if config.has_option('main', name):
+        return func('main', name)
+    else:
+        return default
+
+
+def config_getboolean(name, default):
+    return bool(config_get(name, default, config.getboolean))
+
+
 def main():
+    load_config()
     if len(sys.argv) == 1:
         status_output = hg_status()
         save_status_output(status_output)
