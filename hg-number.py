@@ -1,11 +1,13 @@
 #!/usr/bin/python2
 
 import os
+import re
 import subprocess
 import sys
 from termcolor import colored
 
 
+ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
 ID_FILE = 'hgids.txt'
 
 
@@ -19,7 +21,7 @@ def id_file_path():
 
 
 def hg_status():
-    return subprocess.check_output(['hg', 'st']).strip()
+    return subprocess.check_output(['hg', 'st', '--color', 'always']).strip()
 
 
 def hg_root():
@@ -29,8 +31,7 @@ def hg_root():
 def get_filenames():
     path = id_file_path()
     if not os.path.exists(path):
-        # TODO: Don't hardcode name
-        fail(path + " doesn't exist. Run hg-number first to generate this file.")
+        fail(path + " doesn't exist. Run hg-number with no arguments first to generate this file.")
 
     with open(path) as f:
         status_output = f.read()
@@ -39,6 +40,9 @@ def get_filenames():
 
 
 def save_status_output(status_output):
+    # Strip colors
+    status_output = ANSI_ESCAPE_RE.sub('', status_output)
+
     with open(id_file_path(), 'w+') as f:
         f.write(status_output)
 
