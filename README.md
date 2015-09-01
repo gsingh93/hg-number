@@ -63,3 +63,7 @@ TODO
 - Don't replace numbers after a bare `--`. This will allow numeric arguments to be passed to mercurial without being replaced.
 
 - Allow arbitrary commands to be executed instead of only mercurial commands. For example, `hgn -c rm 1` could execute `rm foo` instead of `hg rm foo`.
+
+- The script currently works by parsing the output of the mercurial binary, but mercurial provides an extension API that may be a better way of doing this.
+
+- Better error reporting/handling
