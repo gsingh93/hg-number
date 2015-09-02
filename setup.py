@@ -1,10 +1,12 @@
+#!/usr/bin/env python2
+
 import os
 from setuptools import setup
 
 
 setup(
     name='hg-number',
-    version='0.0.3',
+    version='0.0.4',
     description='a python script that allows you to use numbers instead of file names in mercurial commands',
     url='https://github.com/gsingh93/hg-number',
     author='Gulshan Singh',
