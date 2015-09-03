@@ -127,6 +127,10 @@ def config_getboolean(name, default):
     return bool(config_get(name, default, config.getboolean))
 
 
+def print_usage():
+    print 'usage: %s [-h] [-c] command [-- other_args]' % os.path.basename(sys.argv[0])
+
+
 def main():
     load_config()
 
@@ -134,6 +138,9 @@ def main():
     if len(sys.argv) > 1:
         if sys.argv[1] == '-c':
             shell_command = True
+        elif sys.argv[1] in ['-h', '--help']:
+            print_usage()
+            exit(0)
 
     if len(sys.argv) == 1 or sys.argv[1] in ['st', 'status']:
         status_output = hg_status()
