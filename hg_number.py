@@ -33,11 +33,17 @@ def hg_status():
     if config_getboolean('color', False):
         args.extend(['--color', 'always'])
 
-    return subprocess.check_output(args).strip()
+    try:
+        return subprocess.check_output(args).strip()
+    except:
+        exit(1)
 
 
 def hg_root():
-    return subprocess.check_output(['hg', 'root']).strip()
+    try:
+        return subprocess.check_output(['hg', 'root']).strip()
+    except:
+        exit(1)
 
 
 def get_filenames():
@@ -120,7 +126,10 @@ def main():
         files = get_filenames()
         new_args = substitute_filenames(files)
         print ' '.join(new_args)
-        subprocess.check_output(new_args, cwd=hg_root())
+        try:
+            subprocess.check_output(new_args, cwd=hg_root())
+        except:
+            exit(1)
 
 
 if __name__ == '__main__':
