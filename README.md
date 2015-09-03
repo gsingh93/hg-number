@@ -11,8 +11,7 @@ Example:
 ```
 $ mkdir tmp && cd tmp
 $ hg init
-$ touch foo
-$ touch bar
+$ touch foo bar
 $ hgn
 
 1 ? bar
@@ -27,6 +26,22 @@ $ hgn
 1 A bar
 2 A foo
 ```
+
+You can also use ranges:
+
+```
+$ hgn add 1-2
+
+hg add bar foo
+
+$ hgn
+
+1 A bar
+2 A foo
+
+```
+
+Note that the IDs for each file only change when `hgn` or `hgn status` is run. If you remove a file, the ID of that file still refers to the same filename, and all other IDs remain unchanged as well.
 
 You can use the `-c` flag to execute shell commands instead of mercurial commands
 
@@ -78,5 +93,3 @@ TODO
 ----
 
 - The script currently works by parsing the output of the mercurial binary, but mercurial provides an extension API that may be a better way of doing this.
-
-- Ranges like `hg add 1-4` are not supported.

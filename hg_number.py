@@ -11,6 +11,7 @@ from termcolor import colored
 config = ConfigParser()
 
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
+RANGE_RE = re.compile(r'(\d+)-(\d+)')
 ID_FILE = 'hgnids.txt'
 CONFIG_FILE = '.hgnrc'
 
@@ -65,6 +66,16 @@ def save_status_output(status_output):
         f.write(status_output)
 
 
+def to_int(val, max_num):
+    num = int(val)
+    if num <= 0:
+        fail(val + ' is not a positive number')
+    elif num > max_num:
+        fail(val + ' is exceeds the number of files')
+
+    return num
+
+
 def substitute_filenames(files, args, shell_command):
     num_files = len(files)
     new_args = []
@@ -76,13 +87,15 @@ def substitute_filenames(files, args, shell_command):
             break
 
         try:
-            arg_int = int(arg)
-            if arg_int <= 0:
-                fail(arg + ' is not a positive number')
-            elif arg_int > num_files:
-                fail(arg + ' is exceeds the number of files')
+            m = RANGE_RE.match(arg)
+            if m:
+                start, end = m.group(1, 2)
+                start, end = to_int(start, num_files), to_int(end, num_files)
+                for i in range(start, end + 1):
+                    new_args.append(files[i - 1])
             else:
-                new_args.append(files[arg_int - 1])
+                num = to_int(arg, num_files)
+                new_args.append(files[num - 1])
         except ValueError:
             new_args.append(arg)
 
