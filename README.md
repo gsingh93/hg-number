@@ -28,6 +28,22 @@ $ hgn
 2 A foo
 ```
 
+You can use the `-c` flag to execute shell commands instead of mercurial commands
+
+```
+$ hgn -c echo filename: 1
+echo filename: bar
+filename: bar
+```
+
+Any arguments that should not be replaced should go after a double dash (`--`):
+
+```
+$ hgn -c -- echo filename: 1
+echo filename: 1
+filename: 1
+```
+
 Installation
 ------------
 
@@ -39,6 +55,7 @@ To alias `hg-number` to `hgn`, add the following to your `.bashrc`:
 
 ```
 alias hgn='hg-number'
+alias hgc='hg-number -c'
 ```
 
 Configuration
@@ -60,10 +77,6 @@ color = true
 TODO
 ----
 
-- Don't replace numbers after a bare `--`. This will allow numeric arguments to be passed to mercurial without being replaced.
-
-- Allow arbitrary commands to be executed instead of only mercurial commands. For example, `hgn -c rm 1` could execute `rm foo` instead of `hg rm foo`.
-
 - The script currently works by parsing the output of the mercurial binary, but mercurial provides an extension API that may be a better way of doing this.
 
-- Better error reporting/handling
+- Ranges like `hg add 1-4` are not supported.

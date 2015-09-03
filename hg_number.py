@@ -65,10 +65,16 @@ def save_status_output(status_output):
         f.write(status_output)
 
 
-def substitute_filenames(files):
+def substitute_filenames(files, args, shell_command):
     num_files = len(files)
     new_args = []
-    for arg in sys.argv:
+    double_dash_pos = None
+    for i, arg in enumerate(args):
+        # After a '--' don't replace any numbers
+        if arg == '--':
+            double_dash_pos = i
+            break
+
         try:
             arg_int = int(arg)
             if arg_int <= 0:
@@ -80,17 +86,23 @@ def substitute_filenames(files):
         except ValueError:
             new_args.append(arg)
 
-    new_args[0] = 'hg'
+    if double_dash_pos != None:
+        # This is safe because out of bounds slicing isn't an error
+        new_args.extend(args[double_dash_pos + 1:])
+
+    if not shell_command:
+        new_args.insert(0, 'hg')
+
+        if config_getboolean('color', False):
+            new_args.extend(['--color', 'always'])
 
     return new_args
 
 
 def prepend_numbers(lines):
     output = []
-    i = 1
-    for l in lines.split('\n'):
-        output.append(str(i) + ' ' + l)
-        i += 1
+    for i, l in enumerate(lines.split('\n')):
+        output.append(str(i + 1) + ' ' + l)
 
     return '\n'.join(output)
 
@@ -117,17 +129,26 @@ def config_getboolean(name, default):
 
 def main():
     load_config()
-    if len(sys.argv) == 1:
+
+    shell_command = False
+    if len(sys.argv) > 1:
+        if sys.argv[1] == '-c':
+            shell_command = True
+
+    if len(sys.argv) == 1 or sys.argv[1] in ['st', 'status']:
         status_output = hg_status()
         save_status_output(status_output)
         if status_output != '':
             print prepend_numbers(status_output)
     else:
         files = get_filenames()
-        new_args = substitute_filenames(files)
+        args = sys.argv[2:] if shell_command else sys.argv[1:]
+        new_args = substitute_filenames(files, args, shell_command)
         print ' '.join(new_args)
         try:
-            subprocess.check_output(new_args, cwd=hg_root())
+            cmd_output = subprocess.check_output(new_args, cwd=hg_root()).strip()
+            if cmd_output != '':
+                print cmd_output
         except:
             exit(1)
 
