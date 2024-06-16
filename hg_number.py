@@ -1,6 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import os
 import re
 import subprocess
@@ -17,7 +17,7 @@ CONFIG_FILE = '.hgnrc'
 
 
 def fail(msg):
-    print colored(msg, 'red')
+    print(colored(msg, 'red'))
     sys.exit(1)
 
 
@@ -35,14 +35,14 @@ def hg_status():
         args.extend(['--color', 'always'])
 
     try:
-        return subprocess.check_output(args).strip()
+        return subprocess.check_output(args).strip().decode('utf-8')
     except:
         exit(1)
 
 
 def hg_root():
     try:
-        return subprocess.check_output(['hg', 'root']).strip()
+        return subprocess.check_output(['hg', 'root']).strip().decode('utf-8')
     except:
         exit(1)
 
@@ -55,7 +55,7 @@ def get_filenames():
     with open(path) as f:
         status_output = f.read()
         lines = status_output.split('\n')
-        return map(lambda l: l.split(' ')[1], lines)
+        return list(map(lambda l: l.split(' ')[1], lines))
 
 
 def save_status_output(status_output):
@@ -141,7 +141,7 @@ def config_getboolean(name, default):
 
 
 def print_usage():
-    print 'usage: %s [-h] [-c] command [-- other_args]' % os.path.basename(sys.argv[0])
+    print('usage: %s [-h] [-c] command [-- other_args]' % os.path.basename(sys.argv[0]))
 
 
 def main():
@@ -159,16 +159,16 @@ def main():
         status_output = hg_status()
         save_status_output(status_output)
         if status_output != '':
-            print prepend_numbers(status_output)
+            print(prepend_numbers(status_output))
     else:
         files = get_filenames()
         args = sys.argv[2:] if shell_command else sys.argv[1:]
         new_args = substitute_filenames(files, args, shell_command)
-        print ' '.join(new_args)
+        print(' '.join(new_args))
         try:
-            cmd_output = subprocess.check_output(new_args, cwd=hg_root()).strip()
+            cmd_output = subprocess.check_output(new_args, cwd=hg_root()).strip().decode('utf-8')
             if cmd_output != '':
-                print cmd_output
+                print(cmd_output)
         except:
             exit(1)
 

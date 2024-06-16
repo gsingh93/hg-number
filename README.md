@@ -93,3 +93,8 @@ TODO
 ----
 
 - The script currently works by parsing the output of the mercurial binary, but mercurial provides an extension API that may be a better way of doing this.
+- Upgrade to Python3
+- Format
+- Add requirements.txt, remove setup.py
+- Fix relative path bug
+- Add types
